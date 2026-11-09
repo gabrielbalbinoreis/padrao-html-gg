@@ -1,0 +1,83 @@
+<!--
+  Dropdown Navigation — padrão GG em HTML/CSS/JS puro (sem React).
+  Port do componente React assets/react/dorpdown-navigation.tsx, usando SÓ os tokens do base
+  (--brand, --brand-50, --brand-100, --line, --ink, --muted, --shadow-lg, --sans, svg.i, App.ic).
+  Uso: cole o bloco de estilo num style próprio DEPOIS do bloco do base (nunca dentro dele), o nav
+  dentro de .topbar-in no lugar de nav.nav, e o bloco de script depois do núcleo App.
+  Montagem: GGDropdownNav.montar(document.getElementById('gg-dnav'), ITENS, { ativo: 1 }).
+  Abaixo de 760px o .gg-dnav some e a navegação continua na .mobile-nav do base.
+-->
+<style>
+:root { --ease-out: cubic-bezier(0.23, 1, 0.32, 1); }
+.gg-dnav { position: relative; margin-left: 10px; }
+.gg-dnav > ul { list-style: none; margin: 0; padding: 0; display: flex; gap: 2px; }
+.gg-dnav > ul > li { position: relative; }
+.gg-dnav .top { position: relative; border: none; background: none; padding: 8px 12px; border-radius: 99px; font-weight: 600; font-size: 14px; color: var(--muted); cursor: pointer; display: inline-flex; gap: 6px; align-items: center; white-space: nowrap; transition: color .15s, background-color .15s; text-decoration: none; }
+.gg-dnav .top:hover, .gg-dnav li.open > .top { color: var(--ink); background: var(--brand-50); }
+.gg-dnav .top.on { color: var(--brand); background: var(--brand-50); }
+.gg-dnav .top:focus-visible { outline: 3px solid var(--brand-100); outline-offset: 1px; }
+.gg-dnav .top .chev { width: 16px; height: 16px; transition: transform .2s var(--ease-out); }
+.gg-dnav li.open > .top .chev { transform: rotate(180deg); }
+.gg-dnav .panel-dd { position: absolute; left: 0; top: 100%; padding-top: 8px; z-index: 40; visibility: hidden; opacity: 0; transform: translateY(-4px) scale(.98); transform-origin: top left; transition: opacity .18s var(--ease-out), transform .18s var(--ease-out), visibility 0s linear .18s; }
+.gg-dnav li.open > .panel-dd { visibility: visible; opacity: 1; transform: none; transition-delay: 0s; }
+.gg-dnav .dd { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--shadow-lg); padding: 18px 20px; display: flex; gap: 36px; width: max-content; max-width: min(92vw, 980px); }
+.gg-dnav .dd h3 { font-family: var(--sans); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; font-weight: 700; color: var(--muted); margin: 0 0 12px; }
+.gg-dnav .dd ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.gg-dnav .dd a { display: flex; gap: 12px; align-items: flex-start; padding: 8px 10px; margin: 0 -10px; border-radius: 10px; text-decoration: none; color: var(--ink); transition: background-color .15s; }
+.gg-dnav .dd a:hover, .gg-dnav .dd a:focus-visible { background: var(--line-2); outline: none; }
+.gg-dnav .dd .ico { width: 36px; height: 36px; border-radius: var(--radius-sm); border: 1px solid var(--line); display: grid; place-items: center; flex: none; color: var(--ink-2); background: var(--surface); transition: background-color .15s, color .15s, border-color .15s; }
+.gg-dnav .dd a:hover .ico { background: var(--brand-50); color: var(--brand); border-color: var(--brand-100); }
+.gg-dnav .dd b { display: block; font-size: 14px; font-weight: 600; line-height: 1.3; }
+.gg-dnav .dd span.d { display: block; font-size: 12px; color: var(--muted); line-height: 1.4; }
+@media (max-width: 760px) { .gg-dnav { display: none; } }
+@media (prefers-reduced-motion: reduce) { .gg-dnav .panel-dd { transform: none; } .gg-dnav .top .chev { transition: none; } }
+</style>
+
+<nav class="gg-dnav" id="gg-dnav" aria-label="Principal"></nav>
+
+<script>
+/* GGDropdownNav.montar(el, itens, { ativo }) — mesmo formato de dados do componente React:
+   [{ id, label, link?, icon?, subMenus?: [{ title, items: [{ label, description, icon, link? }] }] }]
+   icon = nome de um ícone em App.ICONES (não componente React). */
+var GGDropdownNav = (function (H) {
+  var esc = H.esc, ic = H.ic;
+  function montar(el, itens, opts) {
+    opts = opts || {};
+    el.innerHTML = '<ul>' + itens.map(function (n, i) {
+      if (!n.subMenus) {
+        return '<li><a class="top ' + (opts.ativo === n.id ? 'on' : '') + '" href="' + esc(n.link || '#') + '"' + (n.rota ? ' data-ir="' + esc(n.rota) + '"' : '') + '>' + (n.icon ? ic(n.icon) : '') + esc(n.label) + '</a></li>';
+      }
+      var pid = 'gg-dd-' + i;
+      return '<li><button class="top ' + (opts.ativo === n.id ? 'on' : '') + '" aria-expanded="false" aria-controls="' + pid + '">' + (n.icon ? ic(n.icon) : '') + esc(n.label) + ic('down', 'chev') + '</button>' +
+        '<div class="panel-dd" id="' + pid + '"><div class="dd">' + n.subMenus.map(function (s) {
+          return '<div><h3>' + esc(s.title) + '</h3><ul>' + s.items.map(function (it) {
+            return '<li><a href="' + esc(it.link || '#') + '"' + (it.rota ? ' data-ir="' + esc(it.rota) + '"' : '') + '><span class="ico">' + ic(it.icon || 'right') + '</span>' +
+              '<span><b>' + esc(it.label) + '</b><span class="d">' + esc(it.description || '') + '</span></span></a></li>';
+          }).join('') + '</ul></div>';
+        }).join('') + '</div></div></li>';
+    }).join('') + '</ul>';
+
+    var lis = H.$$('li', el).filter(function (li) { return li.parentNode.parentNode === el && li.querySelector('.panel-dd'); });
+    var fecharT = null;
+    function abrir(li) { lis.forEach(function (o) { if (o !== li) fechar(o); }); li.classList.add('open'); li.querySelector('.top').setAttribute('aria-expanded', 'true'); }
+    function fechar(li) { li.classList.remove('open'); li.querySelector('.top').setAttribute('aria-expanded', 'false'); }
+    var hoverFino = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    lis.forEach(function (li) {
+      var bt = li.querySelector('.top');
+      if (hoverFino) {
+        li.addEventListener('mouseenter', function () { clearTimeout(fecharT); abrir(li); });
+        li.addEventListener('mouseleave', function () { fecharT = setTimeout(function () { fechar(li); }, 120); });
+      }
+      bt.addEventListener('click', function (e) { e.stopPropagation(); li.classList.contains('open') ? fechar(li) : abrir(li); });
+      li.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') { fechar(li); bt.focus(); }
+        if (e.key === 'ArrowDown' && document.activeElement === bt) { e.preventDefault(); abrir(li); var a = li.querySelector('.dd a'); if (a) a.focus(); }
+      });
+      li.addEventListener('focusout', function (e) { if (!li.contains(e.relatedTarget)) fechar(li); });
+    });
+    document.addEventListener('click', function () { lis.forEach(fechar); });
+    H.$$('[data-ir]', el).forEach(function (a) { a.addEventListener('click', function (e) { e.preventDefault(); lis.forEach(fechar); H.ir(a.getAttribute('data-ir')); }); });
+  }
+  return { montar: montar };
+})(App);
+</script>
