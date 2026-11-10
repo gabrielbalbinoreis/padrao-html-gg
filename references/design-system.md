@@ -4,6 +4,35 @@ Fonte única da verdade: `references/base-original.html` (cópia do HTML servido
 "Hub de Capacitação em IA", com e-mail de suporte e logos trocados por genéricos). Este arquivo só **descreve** o que está lá. Em caso de dúvida, o base vence.
 Nunca edite o base.
 
+## Painel Executivo (formato padrão de todo documento)
+
+Bloco CSS próprio em `assets/template-painel.html`, depois do CSS do base. Referência visual: painel
+"Indicadores da Qualidade" da Soltec (cores medidas do print do usuário).
+
+| Token do painel | Valor | Uso |
+|---|---|---|
+| `--side` | `color-mix(in srgb, var(--brand) 88%, black)` (= `#6a1a01` com a marca padrão) | Fundo da barra lateral e da barra do celular |
+| `--side-on` / `--side-hover` / `--side-line` / `--side-muted` | brancos translúcidos .18 / .08 / .14 / .64 | Item ativo, hover, separadores, rótulos da lateral |
+| `--ind-ruim` | `#d64545` | Borda/valor de indicador fora da meta ou em queda |
+| `--ind-bom` | `#249c5c` | Dentro da meta, ponto "dados atualizados" |
+| `--ind-atencao` | `#eab93f` | Linha/ponto de atenção (texto de atenção usa `--warn`) |
+| `--ind-critico` | `#7b2726` | Card "Críticos" |
+| `--radius-pn` | `8px` | Cards, selects e itens do painel |
+| `--side-w` | `236px` | Largura da lateral |
+
+| Componente | Classes / helper | Notas |
+|---|---|---|
+| Shell | `.pn-app > .pn-side + .pn-scrim + .pn-main` | Gerado por `shell()`; lateral sticky; < 760px vira gaveta com `.pn-mbar` (menu + logo) |
+| Lateral | `.pn-logo` (logo branco ou nome em Faustina) · `.pn-prod small + b` · `.pn-nav button(.on)` · `.sep` · `.pn-side-foot` | Grupo `admin` abaixo do separador |
+| Barra de status | `.pn-top > .pn-status(i) + .pn-icon-btn(.badge)` | `atualizadoEm`, `notificacoes` do `APP_CFG` |
+| Cabeçalho | `H.cabecalho(rótulo, título, subtítulo)` → `.pn-head .eyebrow h1 p` | Título 32px Faustina |
+| Filtros | `H.filtros([{id, rotulo, opcoes, valor}], acoes)` → `.pn-filtros` | Uma linha, rótulos em caixa alta; "Limpar filtros" em `.btn-link` apagado |
+| Seção | `H.secao(título, sub, ação)` → `.pn-sec` | Ex.: "Agosto de 2026 / Resumo do período / Gerar relatório" |
+| Card de indicador | `H.kpi({rotulo, valor, unidade, sub, tom, barra, direcao, cor})` → `.pn-kpi(.ruim/.bom/.atencao/.critico)` | Borda esquerda 3px na cor do tom; `direcao: 'desce'/'sobe'` + `cor: 'neg'/'pos'` para variação |
+| Grade | `.pn-grid > .pn-card > .pn-card-h(h3, small, ação)` | 1,75fr + 1fr; uma coluna abaixo de 1100px |
+| Gráfico | `H.graficoBarras(dados, {titulo, meta, atencao, max, sufixo, casas})` + `H.ligarGraficos(el, [dados])` | SVG em escala, barras na cor da marca com topo arredondado 4px, linhas Meta/Atenção rotuladas, tooltip no hover e foco, tabela acessível |
+| Lista de atenção | `H.listaAtencao([{titulo, detalhe, tom}])` → `.pn-lista .pn-item` | Ponto colorido + texto (status nunca só por cor) |
+
 ## Tokens (`:root`)
 
 | Grupo | Token | Valor |

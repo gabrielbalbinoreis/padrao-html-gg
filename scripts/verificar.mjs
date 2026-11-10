@@ -31,12 +31,16 @@ if (!alvo.includes('<base target="_top">')) avisos.push('Sem <base target="_top"
 // 3. Estrutura do body
 ['id="app"', 'id="modal-root"', 'id="toast-root"'].forEach((id) => exige(alvo.includes(id), `Raiz ${id}`));
 exige(/function esc\(/.test(alvo), 'Helper esc() presente');
+if (/class="pn-app"|'pn-app'|"pn-app"/.test(alvo) && /\.pn-side\s*\{/.test(alvo)) ok.push('Layout Painel Executivo (barra lateral + área clara)');
+else avisos.push('Sem o layout Painel Executivo (barra lateral marrom). Ele é o formato padrão; use assets/template-painel.html, salvo pedido explícito por outro formato');
 
 // 4. CSS extra (fora do bloco do base): cores, fontes, transições
 const extra = norm(alvo).replace(cssBase, '');
 const cssExtra = [...extra.matchAll(/<style>([\s\S]*?)<\/style>/g)].map((m) => m[1]).join('\n') +
   [...extra.matchAll(/style="([^"]*)"/g)].map((m) => m[1]).join('\n');
-const paleta = new Set([...cssBase.matchAll(/#[0-9a-fA-F]{3,8}\b/g)].map((m) => m[0].toLowerCase()).concat(['#fff', '#ffffff', '#000']));
+// Tokens do layout Painel Executivo (assets/template-painel.html): --ind-ruim, --ind-bom, --ind-atencao, --ind-critico
+const PALETA_PAINEL = ['#d64545', '#249c5c', '#eab93f', '#7b2726'];
+const paleta = new Set([...cssBase.matchAll(/#[0-9a-fA-F]{3,8}\b/g)].map((m) => m[0].toLowerCase()).concat(['#fff', '#ffffff', '#000'], PALETA_PAINEL));
 const hexNovos = [...new Set([...cssExtra.matchAll(/#[0-9a-fA-F]{3,8}\b/g)].map((m) => m[0].toLowerCase()))]
   .filter((h) => !paleta.has(h));
 const brandDecl = (alvo.match(/--brand: (#[0-9a-fA-F]{3,8})/) || [])[1];

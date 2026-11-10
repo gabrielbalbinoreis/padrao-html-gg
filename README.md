@@ -4,6 +4,13 @@ Skill do Claude Code com o **padrão oficial de criação de HTML do Grupo GG**.
 de base (*Hub de Capacitação em IA*): os mesmos tokens, fontes (Faustina + Inter), componentes, estrutura e JS.
 Ela integra as skills **impeccable**, **taste-skill** e **emil-design-eng**.
 
+**Formato padrão: Painel Executivo.** Todo documento sai com a barra lateral marrom (logo da empresa no topo e a
+navegação) e, à direita, a área clara com título, filtros, cards de indicador com borda colorida, gráficos e listas.
+Ponto de partida: `assets/template-painel.html`.
+
+**Logos:** ficam em `assets/marcas/` só na sua máquina (a pasta está no `.gitignore`). Coloque lá o logo branco
+da empresa (ex.: `soltec-branca.png`) para a skill usar; peça o arquivo a quem já tem a skill configurada.
+
 > O HTML de base (`references/base-original.html`) é o do web app original, com o e-mail de suporte e os logos
 > substituídos por valores genéricos. Não adicione dados internos (e-mails, logos de clientes, credenciais) a este
 > repositório: ele é público.
@@ -70,7 +77,10 @@ node ~/.claude/skills/padrao-html-gg/scripts/verificar.mjs caminho/do/arquivo.ht
 | `references/design-system.md` | Catálogo de tokens e componentes |
 | `references/integracao-skills.md` | Como as skills externas entram e quem vence nos conflitos |
 | `references/react-shadcn.md` | Padrão para projetos React/shadcn/Tailwind |
-| `assets/template.html` | Ponto de partida de toda página nova |
+| `assets/template-painel.html` | **Formato padrão** (Painel Executivo) de todo documento novo |
+| `assets/template.html` | Alternativa com barra superior, só sob pedido |
+| `assets/marcas/` | Logos locais (fora do Git) |
+| `scripts/embutir-logo.mjs` | Embute um logo no HTML gerado |
 | `assets/componentes/` | Componentes extras no padrão (ex.: dropdown de navegação) |
 | `assets/react/` | Componentes React de referência |
 | `scripts/verificar.mjs` | Validador do padrão |

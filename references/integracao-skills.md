@@ -23,6 +23,9 @@ Skills instaladas em `~/.claude/skills/`:
 |---|---|
 | impeccable proíbe `eyebrow`/kicker acima de título | **Permitido**: `.eyebrow` é componente do base. Use com parcimônia (no máx. 1 por bloco de destaque) |
 | impeccable recusa "progress rings" e grades de KPI | **Permitido** quando o dado existe: `.ring`, `.kpi`, `.bar` são do base. Nunca como enfeite sem dado real |
+| impeccable proíbe `border-left` colorido acima de 1px em cards | **Permitido no painel**: a borda esquerda de 3px por situação (`.pn-kpi.ruim/.bom/.atencao/.critico`) é o formato padrão GG. Só nos cards de indicador |
+| impeccable recusa o "hero-metric template" (número grande + rótulo + stats) | **Permitido**: a linha de 4 cards de indicador é o formato padrão do Painel Executivo. Sempre com dado real |
+| impeccable/taste: escolher layout e tema "do zero" por superfície | **Layout fixo**: todo documento sai no Painel Executivo (barra lateral marrom + área clara), salvo pedido explícito |
 | impeccable/taste trocam fontes "genéricas" (Inter) | **Fontes fixas**: Faustina + Inter. Não trocar, não adicionar uma terceira |
 | taste-skill: fotos em toda tela, uma seção por tela, cenas/shaders | Só em landing page institucional, e mesmo assim com tokens GG. Em apps (painel, hub, admin, formulários): **não se aplica** |
 | taste-skill: ícones "reais coloridos" | Ícones do padrão: SVG traço 2 do `ICONES`. Logos de produtos de terceiros podem ser imagem |

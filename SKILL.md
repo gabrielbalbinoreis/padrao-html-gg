@@ -2,91 +2,118 @@
 name: padrao-html-gg
 description: >-
   Padrão oficial de criação de HTML do Grupo GG (Grupo Gestão / grupogestao.co). Use SEMPRE que for criar,
-  refazer, revisar ou estilizar qualquer página, tela, web app, painel, dashboard, formulário, relatório,
-  landing page ou componente HTML para o Grupo GG ou suas empresas/clientes (ex.: Soltec Engenharia), inclusive
-  web apps Google Apps Script (HtmlService) e projetos React/shadcn/Tailwind. Garante os mesmos tokens, fontes
-  (Faustina + Inter), componentes, estrutura e JS do HTML de base, e integra as skills impeccable,
-  design-taste-frontend (taste-skill) e emil-design-eng. Também cobre a integração de componentes React
-  colados (ex.: DropdownNavigation) no padrão GG.
+  refazer, revisar ou estilizar qualquer documento, página, tela, web app, painel, dashboard, formulário,
+  relatório ou componente HTML para o Grupo GG ou suas empresas/clientes (ex.: Soltec Engenharia), inclusive
+  web apps Google Apps Script (HtmlService) e projetos React/shadcn/Tailwind. Formato padrão obrigatório:
+  PAINEL EXECUTIVO — barra lateral marrom (cor da marca) com o logo da empresa no topo e a navegação, e à
+  direita a área clara com rótulo, título em Faustina, filtros, cards de indicador com borda colorida, gráficos
+  e listas. Garante os tokens, fontes (Faustina + Inter), componentes e JS do HTML de base, e integra as skills
+  impeccable, design-taste-frontend (taste-skill) e emil-design-eng.
 user-invocable: true
-argument-hint: "[o que criar] — ex.: painel de obras, formulário de cadastro, landing da empresa"
+argument-hint: "[o que criar] — ex.: painel de indicadores, relatório de obras, cadastro de fornecedores"
 ---
 
 # Padrão HTML Grupo GG
 
-Todo HTML gerado para o Grupo GG segue o **HTML de base**: o web app *Hub de Capacitação em IA*
-(`https://script.google.com/a/macros/grupogestao.co/s/AKfycbxqDdKpsimvl82rPkj61zdHTeygEif3LDpjr_UWfLIkGkf8-qzREu84O1TbIZdE8HA/exec`).
-A cópia dele está em `references/base-original.html`: idêntica ao HTML servido, exceto o e-mail de suporte
-(trocado por `suporte@empresa.example`) e os dois logos (trocados por um espaço reservado "LOGO"), retirados para o
-repositório poder ser público. Em página real, use o logo e o contato da empresa via `APP_CFG`.
+## Formato padrão: Painel Executivo (obrigatório)
 
-## Regra zero: o base é intocável
+**Todo documento HTML gerado sai no formato Painel Executivo**, a referência visual do GG (o painel "Indicadores
+da Qualidade" da Soltec):
 
-- **Nunca edite** `references/base-original.html`, nem o bloco de CSS que vem dele. Ele é a referência.
-- Página nova = **copiar** o head e o bloco de CSS do base sem alterar nenhum caractere, e **acrescentar** o que
-  faltar num `<style>` separado, depois dele.
-- O único valor que muda por empresa é `--brand` (via `corPrimaria` / `<style>:root { --brand: ... }</style>`).
+- **Esquerda — barra lateral marrom** (`--side`, a cor da marca escurecida): **logo da empresa no topo** (versão
+  branca), rótulo pequeno em caixa alta (ex.: "PAINEL EXECUTIVO"), nome do produto em Faustina, navegação com
+  ícones (item ativo com fundo claro translúcido), separador, grupo administrativo (Gerenciamento,
+  Configurações) e o nome da empresa no rodapé.
+- **Direita — área clara** (`--bg`): barra de status no topo (● "Dados de dd/mm/aaaa hh:mm", sino com contador,
+  atualizar); cabeçalho com rótulo vermelho em caixa alta + título grande em Faustina + subtítulo; linha de
+  filtros (selects com rótulo em caixa alta, "Mais filtros", "Limpar filtros"); título do período com ação
+  ("Gerar relatório"); 4 cards de indicador com **borda esquerda colorida** por situação; grade com gráfico e
+  lista "Precisam de atenção".
+- **Celular:** barra marrom no topo com menu + logo; a lateral vira gaveta; cards em 2 colunas.
+
+Ponto de partida: **`assets/template-painel.html`**. Use o `assets/template.html` (barra superior simples) **só se o
+usuário pedir explicitamente outro formato**.
+
+### Logo
+
+1. Se existir `assets/marcas/<empresa>-branca.png` nesta skill (ex.: `soltec-branca.png`), embuta-o:
+   `node <skill>/scripts/embutir-logo.mjs <arquivo.html> <skill>/assets/marcas/soltec-branca.png`.
+2. Se não existir, peça o logo da empresa ao usuário (versão branca, PNG/SVG). Sem logo, a lateral mostra o
+   nome da empresa em Faustina; nunca invente um logo.
+3. `assets/marcas/` fica **fora do Git** (o repositório é público): logos de clientes não são publicados.
+
+## Base técnica: o HTML de base é intocável
+
+Tudo é construído sobre o **HTML de base** (web app *Hub de Capacitação em IA*,
+`https://script.google.com/a/macros/grupogestao.co/s/AKfycbxqDdKpsimvl82rPkj61zdHTeygEif3LDpjr_UWfLIkGkf8-qzREu84O1TbIZdE8HA/exec`),
+cuja cópia está em `references/base-original.html` (idêntica ao HTML servido, exceto e-mail de suporte e logos,
+trocados por genéricos para o repositório ser público).
+
+- **Nunca edite** `references/base-original.html`, nem o bloco de CSS que vem dele.
+- Página nova = **copiar** o head e o CSS do base sem alterar nenhum caractere, e **acrescentar** o resto em
+  `<style>` separado depois dele (é o que os templates já fazem: o bloco do painel vem depois do bloco do base).
+- O único valor que muda por empresa é `--brand` (via `corPrimaria`); a lateral deriva dele.
 - Se o usuário entregar um HTML e pedir para não alterar, trabalhe só em arquivos novos.
 
 ## Arquivos da skill
 
 | Arquivo | Para quê |
 |---|---|
-| `references/base-original.html` | HTML de base (fonte da verdade; só e-mail e logos substituídos) |
-| `references/design-system.md` | Catálogo de tokens, componentes, classes, JS, breakpoints, microcopy |
+| `assets/template-painel.html` | **Formato padrão.** Head + CSS do base idênticos + bloco Painel Executivo + núcleo `App` com shell lateral, `cabecalho`, `filtros`, `secao`, `kpi`, `graficoBarras`, `listaAtencao` e telas de exemplo |
+| `assets/template.html` | Alternativa (barra superior), só sob pedido |
+| `assets/marcas/` | Logos locais das empresas (fora do Git) |
+| `references/base-original.html` | HTML de base (fonte da verdade) |
+| `references/design-system.md` | Tokens, componentes do base **e do painel**, JS, breakpoints, microcopy |
 | `references/integracao-skills.md` | Como impeccable, taste-skill e emil entram, e quem vence nos conflitos |
-| `references/react-shadcn.md` | Projetos React: checagem shadcn/Tailwind/TS, `/components/ui`, tokens GG no tema, procedimento de integração |
-| `assets/template.html` | Ponto de partida: head + CSS do base idênticos + núcleo `App` (helpers, views, nav, modal, toast, api) |
-| `assets/componentes/dropdown-nav.html` | Menu dropdown (mega-menu) no padrão GG, sem React |
-| `assets/react/dorpdown-navigation.tsx`, `assets/react/demo.tsx` | Componente React DropdownNavigation, como recebido |
-| `scripts/verificar.mjs` | Validador: `node <skill>/scripts/verificar.mjs <arquivo.html>` |
+| `references/react-shadcn.md` | Projetos React/shadcn/Tailwind |
+| `assets/componentes/`, `assets/react/` | Componentes extras (dropdown, etc.) |
+| `scripts/verificar.mjs` | Validador (CSS do base intacto, tokens, layout painel) |
+| `scripts/embutir-logo.mjs` | Embute um logo PNG/SVG no `APP_CFG.logoUrl` de um HTML |
 
 ## Fluxo
 
-1. **Entenda a superfície** e defina o modo (impeccable): *Operate* (painel, hub, admin, formulário, ferramenta;
-   é o caso padrão), *Read* (relatório, documentação), *Persuade* (landing/site institucional).
-2. **Escolha o alvo:**
-   - **HTML único / Apps Script** (padrão): copie `assets/template.html` para o projeto e substitua
-     `{{NOME_APP}}`, `{{NOME_EMPRESA}}`, `{{TITULO}}`, `{{SUBTITULO}}` e as views de exemplo.
-   - **Projeto React**: siga `references/react-shadcn.md`.
-3. **Leia `references/design-system.md`** e monte a tela **só com as classes do base** (`.card`, `.panel`, `.kpi`,
-   `.btn-*`, `.field/.input`, `.pill.s-*`, `table.t`, `.filters`, `.subtabs`, `.modal`, `.toast`...). Precisou de
-   algo novo? Crie no `<style>` extra, com os tokens (`var(--brand)`, `var(--line)`, `var(--radius)`,
-   `var(--shadow)`...) e o mesmo vocabulário visual (raios 9/10/14/16/18, pílulas 99px, Faustina nos títulos).
-4. **Antes de escrever UI**, leia `~/.claude/skills/impeccable/reference/craft-floor.md` (parte *Verify*) e, para
-   Operate/Read, `~/.claude/skills/impeccable/reference/operate.md`.
-5. **Animações:** siga `emil-design-eng` (ver `references/integracao-skills.md`): `--ease-out`, ≤ 300ms,
-   nada de `scale(0)`/`ease-in`/`transition: all`, `:active { transform: scale(.97) }` em botões novos,
-   hover de movimento só com `(hover: hover) and (pointer: fine)`, `prefers-reduced-motion`.
-6. **Landing/site institucional:** aplique também o taste-skill (`~/.claude/skills/design-taste-frontend/SKILL.md`)
-   só no que não colide com o base (plano de seções, copy, fotos reais), nunca o CSS ou as fontes dele.
-7. **JS:** mantenha as convenções do base: núcleo IIFE, `esc()` em todo dado que entra em `innerHTML`,
-   `api('funcao', ...)` sobre `google.script.run` com resposta `{ ok, data, erro }`, `carregando()`,
-   `erroNaTela()`, `ocupado(btn, promessa)`, `toast()`, `modal()`, nomes e textos em português.
-8. **Estados obrigatórios** em toda tela com dados: carregando, vazio (`.empty`), erro com "Tentar novamente",
-   desabilitado/ocupado nos botões, e o responsivo em 1180 / 980 / 760 / 390px.
-9. **Verifique:**
-   - `node ~/.claude/skills/padrao-html-gg/scripts/verificar.mjs <arquivo.html>`: zero erros; resolva os avisos
-     ou justifique.
-   - Revise com `impeccable` → `reference/audit.md` e `reference/polish.md`.
-   - Se houver animação, revise com `emil-design-eng` / `review-animations` (tabela Before | After | Why).
-   - Abra no navegador em desktop e 390px quando possível.
+1. **Copie `assets/template-painel.html`** para o destino. Preencha `window.APP_CFG`: `nomeEmpresa`,
+   `rotuloApp` (ex.: "Painel executivo"), `nomeApp` (ex.: "Indicadores da Qualidade"), `corPrimaria`,
+   `atualizadoEm`, `notificacoes`. Embuta o logo (seção Logo).
+2. **Monte as telas** com `H.registrar(nome, rotulo, icone, fn, grupo)` (`grupo: 'admin'` vai para baixo do
+   separador). Cada tela segue a ordem do painel: `H.cabecalho(rótulo, título, subtítulo)` → `H.filtros([...])`
+   (se houver filtros) → `H.secao(período, resumo, ação)` → `.pn-kpis` com `H.kpi({...})` (tom `ruim` | `bom` |
+   `atencao` | `critico`) → `.pn-grid` com `.pn-card` (gráfico `H.graficoBarras` + `H.ligarGraficos`, tabela
+   `table.t`, `H.listaAtencao`). Remova as telas de exemplo que não usar; nunca deixe item de menu sem conteúdo real.
+3. **Classes:** só as do base (`.btn-*`, `.field/.input`, `.pill.s-*`, `table.t`, `.modal`, `.toast`, `.empty`...)
+   e as do painel (`.pn-*`). Novas regras em `<style>` extra, só com tokens (`var(--brand)`, `var(--side)`,
+   `var(--ind-*)`, `var(--line)`, `var(--radius-pn)`...).
+4. **Antes de escrever UI**, leia `~/.claude/skills/impeccable/reference/craft-floor.md` (parte *Verify*) e
+   `~/.claude/skills/impeccable/reference/operate.md` (painel = modo *Operate*).
+5. **Gráficos:** uma série por gráfico, uma escala, meta/atenção como linhas rotuladas, tooltip no hover/foco,
+   tabela acessível (o `graficoBarras` já faz). Status sempre com texto, nunca só cor; texto de "atenção" em
+   `--warn` (o amarelo `--ind-atencao` é só para linhas e marcas).
+6. **Animações:** `emil-design-eng`: `--ease-out`, ≤ 300ms, nada de `scale(0)`/`ease-in`/`transition: all`,
+   `:active { transform: scale(.97) }`, `prefers-reduced-motion`.
+7. **JS:** convenções do base: `esc()` em todo dado em `innerHTML`, `api('funcao', ...)` sobre
+   `google.script.run` com `{ ok, data, erro }`, `carregando()`, `erroNaTela()`, `ocupado()`, `toast()`, `modal()`,
+   nomes e textos em português.
+8. **Estados obrigatórios:** carregando, vazio (`.empty`), erro com "Tentar novamente", botões ocupados, e o
+   responsivo em 1366 / 1100 / 760 / 390px (gaveta lateral no celular).
+9. **Verifique:** `node ~/.claude/skills/padrao-html-gg/scripts/verificar.mjs <arquivo.html>` com zero erros e
+   zero avisos (o aviso "Sem o layout Painel Executivo" só é aceitável se o usuário pediu outro formato);
+   revise com `impeccable` (`audit.md`, `polish.md`); abra no navegador em desktop e 390px.
 
 ## Apps Script
 
-- Arquivo servido por `HtmlService.createHtmlOutputFromFile('Index')` (ou `createTemplateFromFile` + `include()`
-  para separar CSS/JS em parciais `.html`); título via `.setTitle('Nome — Empresa')`, viewport via
-  `.addMetaTag('viewport', 'width=device-width, initial-scale=1')`.
-- `<base target="_top">` sempre (links saem do iframe sandbox).
+- `HtmlService.createHtmlOutputFromFile('Index')` (ou `createTemplateFromFile` + `include()`); título via
+  `.setTitle('Nome — Empresa')`, viewport via `.addMetaTag('viewport', 'width=device-width, initial-scale=1')`.
+- `<base target="_top">` sempre.
 - Funções do servidor devolvem `{ ok: true, data }` ou `{ ok: false, erro: 'mensagem para o usuário' }`.
-- Configuração da empresa (nome, logo, cor) injetada como `window.APP_CFG = {...}` antes do núcleo, como o
-  `HUB_CFG` do base. Logo em `logoUrl` (URL ou data URI); sem logo, a marca mostra só o nome.
+- `window.APP_CFG` injetado pelo servidor antes do núcleo (como o `HUB_CFG` do base); `atualizadoEm` vem da
+  última carga de dados.
 
 ## Não fazer
 
-- Trocar ou acrescentar fontes; usar cores hex fora dos tokens; usar Tailwind/Bootstrap/CDN de UI num HTML GG
-  (o CSS é o do base).
+- Gerar documento sem a barra lateral marrom com logo, ou com outra paleta/fonte (salvo pedido explícito).
+- Trocar ou acrescentar fontes; usar cores hex fora dos tokens; usar Tailwind/Bootstrap/CDN de UI.
 - Emoji ou caractere Unicode como ícone (use `ic('nome')`; novos ícones em SVG traço 2, estilo lucide).
-- Redesenhar o visual "para ficar mais moderno": o impeccable trabalha aqui em modo *refinement*, nunca *redesign*.
-- Remover `.eyebrow`, `.ring`, `.kpi` por causa de regras genéricas das skills externas (ver conflitos resolvidos
-  em `references/integracao-skills.md`).
+- Redesenhar "para ficar mais moderno": o impeccable trabalha em modo *refinement*, nunca *redesign*.
+- Remover `.eyebrow`, cards de indicador, borda colorida dos cards ou `.ring` por regras genéricas das skills
+  externas (ver conflitos resolvidos em `references/integracao-skills.md`).
+- Publicar logo de cliente no repositório (fica em `assets/marcas/`, fora do Git).
